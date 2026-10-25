@@ -1,0 +1,15 @@
+/* Translucent, blue-lit material on the activity-to-update illustrations. */
+.hero-machine{background:linear-gradient(135deg,#ffffff99,#e4efff66 60%,#f9fcff99);border:1px solid #ffffffc9;box-shadow:0 22px 70px #4f82c91c,inset 0 1px 0 #ffffff;backdrop-filter:blur(22px) saturate(140%)}
+.hero-machine:before{content:'';position:absolute;inset:0;border-radius:inherit;background:radial-gradient(ellipse at 80% 35%,#83b9ff21,transparent 65%);pointer-events:none;z-index:-1}
+.hero-machine .machine-event,.login-source{background:#ffffffa3;border:1px solid #ffffffd9;box-shadow:0 9px 28px #477fc51c,inset 0 1px 0 #fff;backdrop-filter:blur(16px) saturate(135%)}
+.daily-notification,.home-update-deck .daily-notification{background:#f8fbfff0;border:1px solid #fff;box-shadow:0 18px 38px #3c7cc72b,0 3px 8px #487fc50e,inset 0 1px 0 #fff;backdrop-filter:blur(22px) saturate(140%)}
+.hero-machine>.machine-node{background:linear-gradient(145deg,#f4fbffea,#d4e8fff0);border:1px solid #ffffffed;color:#3e73ae;box-shadow:0 0 0 7px #b7d5ff1c,0 10px 28px #5c95da25,inset 0 1px #fff;backdrop-filter:blur(14px)}
+.homepage-beams{color:#72a7e1}.homepage-beam-track{stroke-opacity:.26;stroke-width:1.5}.homepage-beam-pulse{stroke-width:3;filter:drop-shadow(0 0 5px #72b3ff8c)}.homepage-beam-core{stroke:#f7fcff;stroke-width:1.2}
+.login-ref-lines path{stroke:#6b9dd4;opacity:.5}.login-ref-lines circle{fill:#7db4ed;filter:drop-shadow(0 0 3px #80baff75)}
+body:not(.light) .hero-machine{background:linear-gradient(135deg,#172332a1,#111c29c9 60%,#1b283ca1);border-color:#b8d8ff26;box-shadow:0 24px 75px #367bdc18,inset 0 1px #c4ddff1a}
+body:not(.light) .hero-machine:before{background:radial-gradient(ellipse at 80% 35%,#4e99ff18,transparent 65%)}
+body:not(.light) .hero-machine .machine-event,body:not(.light) .login-source{background:#1c2939c7;border-color:#b5d5ff29;box-shadow:0 12px 28px #3c83e51a,inset 0 1px #d0e5ff12}
+body:not(.light) .daily-notification,body:not(.light) .home-update-deck .daily-notification{background:#1a2635f5;border-color:#bfdcff35;box-shadow:0 18px 45px #397ee626,0 3px 10px #0003,inset 0 1px #d4e9ff1c}
+body:not(.light) .hero-machine>.machine-node{background:linear-gradient(145deg,#283f58ed,#1c2e44f5);color:#a9d3ff;border-color:#c0ddff42;box-shadow:0 0 0 7px #679ce30d,0 10px 30px #4b95fa29,inset 0 1px #e1f0ff26}
+body:not(.light) .homepage-beams{color:#8ebdff}
+@media(prefers-reduced-transparency:reduce){.hero-machine,.hero-machine .machine-event,.login-source,.daily-notification,.home-update-deck .daily-notification{backdrop-filter:none;background:#f4f8ff}body:not(.light) .hero-machine,body:not(.light) .hero-machine .machine-event,body:not(.light) .login-source,body:not(.light) .daily-notification{background:#1a2635}}

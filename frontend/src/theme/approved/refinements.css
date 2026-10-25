@@ -1,0 +1,29 @@
+/* Final interface pass: controls, motion, and keyboard resilience. */
+:root{--control-line:#657168}
+body.light{--control-line:#7b8776}
+input,select,textarea,.switch{border-color:var(--control-line)}
+h1,h2,h3{text-wrap:balance}
+p{text-wrap:pretty}
+.mono,time,.week-control,.insight-strip{font-variant-numeric:tabular-nums}
+.topbar .slash,.section-title span{color:var(--muted)}
+.dashboard-grid>.stack{align-content:start}
+.bullet p{font-size:.94rem}
+.grow{min-width:0;overflow-wrap:anywhere}
+.btn{transition:transform 150ms ease-out}
+button:not(:disabled):active,.btn:not(:disabled):active{transform:scale(.96)}
+button:disabled:active{transform:none}
+dialog,.sidebar{overscroll-behavior:contain}
+html{scroll-padding-top:75px}
+.no-transitions *,.no-transitions *:before,.no-transitions *:after{transition:none!important}
+.flow-paused .travel,.flow-offscreen .travel{animation-play-state:paused}
+.animation-toggle{font-size:.65rem;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:5px 8px;min-height:26px}
+.visual-footer{display:flex;align-items:center;gap:12px}
+.mobile-close{display:none}
+.sidebar-bottom>a:last-child{display:flex;align-items:center;gap:7px}
+.bullet .chip .icon{width:12px;height:12px}
+.editor-footer>small{display:flex;align-items:center;gap:6px}
+.editor-footer>small .icon{width:13px;height:13px;flex-shrink:0}
+@media(hover:none){.btn:hover,.side-nav a:hover,.icon-btn:hover{background:var(--raised);border-color:var(--line)}.btn.primary:hover{background:var(--lime);filter:none}.btn.white:hover{background:#f0f2ed}.btn.ghost:hover{background:transparent}.event-row:hover{background:transparent}.event-row.selected{background:var(--soft)}.add-item:hover{border-color:var(--line);color:var(--muted)}}
+@media(max-width:640px){input,select,textarea{font-size:16px}.mobile-close{display:flex;position:absolute;right:15px;top:30px}.sidebar .brand{font-size:.95rem}.sidebar{overflow-y:auto;padding-top:25px}.sidebar .brand-mark{width:27px;height:30px}.visual-footer{font-size:.58rem;gap:7px}.animation-toggle{font-size:.58rem}.main-shell{padding-bottom:max(35px,env(safe-area-inset-bottom))}.hero h1{letter-spacing:-.045em}.public-links .btn{font-size:.75rem;padding:8px 11px}.repo-table td{overflow-wrap:anywhere}.editor-footer small{max-width:140px}}
+@media(prefers-reduced-motion:reduce){button:not(:disabled):active,.btn:not(:disabled):active{transform:none}}
+body.reduce-motion button:not(:disabled):active,body.reduce-motion .btn:not(:disabled):active{transform:none}

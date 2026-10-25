@@ -1,0 +1,7 @@
+node_modules
+dist
+.data
+.env*
+frontend/src/theme/approved
+frontend/src/theme/workspace.css
+package-lock.json

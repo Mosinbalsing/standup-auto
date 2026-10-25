@@ -1,0 +1,154 @@
+{
+  "info": {
+    "name": "Standup Auto — local sample flow",
+    "description": "Run against the local server. Demo data only. Poll the job until terminal before saving. Cookie jar must be enabled.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://127.0.0.1:5190" },
+    { "key": "csrf", "value": "" },
+    { "key": "jobId", "value": "" },
+    { "key": "date", "value": "" },
+    { "key": "putBody", "value": "{}" }
+  ],
+  "item": [
+    {
+      "name": "Create sample account",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/demo/login",
+        "header": [
+          { "key": "Origin", "value": "{{baseUrl}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Sample account available', () => pm.expect(pm.response.code).to.be.oneOf([200,201]));",
+              "pm.collectionVariables.set('csrf', pm.response.json().csrf);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Select sample repositories",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/repositories",
+        "header": [
+          { "key": "Origin", "value": "{{baseUrl}}" },
+          { "key": "X-CSRF-Token", "value": "{{csrf}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{\"selected\":[\"demo-web\",\"demo-api\"]}" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": ["pm.test('Selection saved', () => pm.response.to.have.status(200));"]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Start sync",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/sync",
+        "header": [
+          { "key": "Origin", "value": "{{baseUrl}}" },
+          { "key": "X-CSRF-Token", "value": "{{csrf}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{}" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Sync accepted', () => pm.response.to.have.status(202));",
+              "pm.collectionVariables.set('jobId', pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Poll sync job — repeat until terminal",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/jobs/{{jobId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Job is owned and readable', () => pm.response.to.have.status(200));",
+              "pm.test('Known job state', () => pm.expect(pm.response.json().status).to.be.oneOf(['running','succeeded','partial','failed']));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get workspace and prepare an edited draft",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/workspace" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Workspace available', () => pm.response.to.have.status(200));",
+              "const w = pm.response.json(); pm.collectionVariables.set('date', w.date);",
+              "const d = w.standup || {version:0,items:{yesterday:[],today:[],blockers:[]}};",
+              "d.items.today = [{id:'postman-plan',text:'Review the API integration tests.'}];",
+              "pm.collectionVariables.set('putBody',JSON.stringify({version:d.version,items:d.items,reviewed:true}));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Save reviewed standup",
+      "request": {
+        "method": "PUT",
+        "url": "{{baseUrl}}/api/standups/{{date}}",
+        "header": [
+          { "key": "Origin", "value": "{{baseUrl}}" },
+          { "key": "X-CSRF-Token", "value": "{{csrf}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": { "mode": "raw", "raw": "{{putBody}}" }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Saved with a version', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().version).to.be.above(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Export saved standup",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/export?date={{date}}&format=plain" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Export uses saved wording', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().text).to.include('Review the API integration tests.'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

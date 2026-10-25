@@ -1,0 +1,567 @@
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import './theme/approved/style.css';
+@import './theme/approved/refinements.css';
+@import './theme/approved/apple.css';
+@import './theme/approved/login-stack.css';
+@import './theme/approved/home-beams.css';
+@import './theme/approved/glass.css';
+@import './theme/workspace.css';
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-muted: var(--muted);
+  --color-card: var(--surface);
+  --color-primary: var(--lime);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0007;
+  backdrop-filter: blur(5px);
+  z-index: 40;
+}
+.radix-dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100% - 32px));
+  max-height: 85dvh;
+  overflow: auto;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: 0 24px 80px #0004;
+  z-index: 50;
+}
+.radix-dialog h2 {
+  padding-right: 25px;
+  margin-bottom: 16px;
+  font-size: 1.4rem;
+}
+.radix-dialog p {
+  line-height: 1.75;
+  font-size: 0.85rem;
+}
+.dialog-x {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  padding: 5px;
+  color: var(--muted);
+}
+.btn.danger {
+  color: #c84646;
+  border-color: #c8464655;
+}
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  padding: 20px 25px;
+  border-top: 1px solid var(--line);
+}
+.workspace-brand {
+  white-space: nowrap;
+}
+.public-nav .workspace-brand {
+  margin: 0;
+}
+.public-links .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.react-machine {
+  max-width: 1020px;
+  margin: 62px auto 20px;
+  min-height: 365px;
+  position: relative;
+  padding: 38px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 70px minmax(0, 1.1fr);
+  gap: 55px;
+  text-align: left;
+}
+.react-machine .machine-inputs {
+  display: grid;
+  gap: 20px;
+}
+.react-machine .machine-event {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 16px;
+  border-radius: 15px;
+  min-width: 0;
+}
+.react-machine .machine-event strong {
+  display: block;
+  font-size: 0.79rem;
+}
+.react-machine .machine-event span {
+  display: block;
+  font-size: 0.82rem;
+  margin-top: 5px;
+}
+.react-machine .machine-event small {
+  display: block;
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 9px;
+}
+.react-machine .machine-node {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 65px;
+  height: 70px;
+  border-radius: 18px;
+}
+.react-machine .notification-home-host {
+  align-self: center;
+  height: 285px;
+  min-width: 0;
+}
+.react-machine .home-update-deck {
+  height: 100%;
+  position: relative;
+}
+.react-machine .daily-notification {
+  padding: 24px;
+}
+.react-machine .notification-section {
+  margin-top: 15px;
+}
+.react-animation-controls {
+  position: absolute;
+  bottom: 8px;
+  left: 38px;
+  right: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+.react-animation-controls button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.62rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 7px;
+}
+.homepage-beam-pulse,
+.homepage-beam-core {
+  animation: beam-flow 2s linear infinite;
+}
+.is-paused .homepage-beam-pulse,
+.is-paused .homepage-beam-core {
+  animation-play-state: paused;
+}
+.notification-arrive {
+  animation: notification-arrive 300ms ease-out;
+}
+.react-login-machine {
+  margin-top: 35px;
+  padding: 25px 18px 45px;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1fr) 38px minmax(0, 1.1fr);
+  min-height: 360px;
+}
+.react-login-machine .machine-node {
+  width: 36px;
+  height: 44px;
+}
+.react-login-machine .machine-event {
+  padding: 12px;
+  gap: 7px;
+}
+.react-login-machine .machine-event span {
+  font-size: 0.72rem;
+}
+.react-login-machine .machine-event small {
+  display: none;
+}
+.react-login-machine .daily-notification {
+  padding: 16px;
+}
+.react-login-machine .notification-head {
+  font-size: 0.7rem;
+}
+.react-login-machine .notification-head time {
+  display: none;
+}
+.react-login-machine .notification-text {
+  font-size: 0.7rem;
+}
+.react-login-machine .react-animation-controls {
+  left: 18px;
+  right: 18px;
+}
+.react-login-machine .sample-label {
+  max-width: 130px;
+}
+.react-preview-event {
+  padding: 17px 0;
+  border-bottom: 1px solid var(--line);
+}
+.react-preview-event p {
+  margin: 8px 0 0;
+  font-size: 0.86rem;
+}
+.land-section.hero-new {
+  max-width: 1200px;
+}
+.hero-new .land-title {
+  font-size: clamp(3.1rem, 5.4vw, 5.4rem);
+}
+.notification-head > svg {
+  color: var(--lime);
+  flex-shrink: 0;
+}
+.hero-new .trust {
+  justify-content: center;
+}
+.icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+.workspace-event .event-symbol svg {
+  width: 17px;
+  height: 17px;
+}
+.btn svg {
+  flex-shrink: 0;
+}
+.no-motion * {
+  animation: none !important;
+  transition: none !important;
+}
+@keyframes beam-flow {
+  0% {
+    stroke-dashoffset: 200;
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: -30;
+    opacity: 0;
+  }
+}
+@keyframes notification-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@media (max-width: 900px) {
+  .react-machine {
+    gap: 24px;
+    padding: 25px;
+    grid-template-columns: minmax(0, 1fr) 48px minmax(0, 1.1fr);
+  }
+  .react-machine .machine-node {
+    width: 45px;
+    height: 55px;
+  }
+  .react-login-machine {
+    gap: 15px;
+    padding: 20px 15px 48px;
+  }
+  .react-login-machine .machine-event > svg {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .desktop-link {
+    display: none;
+  }
+  .public-nav .workspace-brand {
+    font-size: 0.95rem;
+  }
+  .public-nav .brand-mark {
+    width: 29px;
+    height: 32px;
+  }
+  .public-links > a:not(.btn) {
+    font-size: 0.78rem;
+  }
+  .public-links .btn {
+    font-size: 0.75rem;
+    padding: 9px 11px;
+  }
+  .public-links {
+    gap: 8px;
+  }
+  .public-nav .icon-btn {
+    width: 26px;
+  }
+  .react-machine,
+  .react-login-machine {
+    margin-top: 40px;
+    padding: 20px 15px 65px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    min-height: 470px;
+  }
+  .react-machine .machine-inputs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .react-machine .machine-event {
+    padding: 10px;
+    display: block;
+  }
+  .react-machine .machine-event strong {
+    font-size: 0.66rem;
+  }
+  .react-machine .machine-event span {
+    font-size: 0.64rem;
+  }
+  .react-machine .machine-event small {
+    display: none;
+  }
+  .react-machine .machine-event > svg {
+    margin-bottom: 6px;
+    width: 16px;
+    height: 16px;
+    display: block;
+  }
+  .react-machine .machine-node {
+    display: none;
+  }
+  .react-machine .notification-home-host {
+    height: 265px;
+  }
+  .react-animation-controls {
+    left: 15px;
+    right: 15px;
+    bottom: 12px;
+    font-size: 0.56rem;
+  }
+  .react-animation-controls .sample-label {
+    max-width: 120px;
+  }
+  .react-animation-controls button {
+    font-size: 0.58rem;
+    padding: 5px;
+  }
+  .login-reference {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .login-reference .login-intro h1 {
+    font-size: 2.8rem;
+  }
+  .login-reference .login-card {
+    padding: 27px;
+  }
+  .public-nav:has(.text-link) .workspace-brand {
+    font-size: 0.85rem;
+  }
+  .radix-dialog .dialog-content {
+    padding: 22px;
+  }
+  .workspace-main .panel-head > .row {
+    flex-wrap: wrap;
+  }
+  .react-machine .daily-notification {
+    padding: 19px;
+  }
+  .hero-new .hero-actions {
+    flex-wrap: wrap;
+  }
+  .public-footer {
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+.ui-select-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 14px;
+  border: 1px solid var(--control-line);
+  border-radius: 12px;
+  background: var(--surface);
+  font-size: 0.84rem;
+  text-align: left;
+}
+.ui-select-trigger > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ui-select-trigger[data-state='open'] {
+  outline: 2px solid var(--lime);
+  outline-offset: 2px;
+}
+.ui-select-trigger > span:last-child {
+  transition: transform 150ms ease-out;
+}
+.ui-select-trigger[data-state='open'] > span:last-child {
+  transform: rotate(180deg);
+}
+.ui-select-content {
+  z-index: 50;
+  min-width: var(--radix-select-trigger-width);
+  max-width: calc(100vw - 32px);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 10px 35px #0002;
+  animation: select-enter 150ms ease-out;
+}
+.ui-select-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  min-height: 38px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  font-size: 0.83rem;
+  outline: 0;
+  cursor: default;
+}
+.ui-select-item[data-highlighted] {
+  background: var(--soft);
+  color: var(--lime);
+}
+.ui-select-scroll {
+  display: flex;
+  justify-content: center;
+  padding: 7px;
+}
+.workspace-format .ui-select-trigger {
+  width: auto;
+  min-width: 150px;
+}
+.ui-checkbox {
+  accent-color: var(--lime);
+}
+.ui-input,
+.ui-textarea {
+  color: var(--text);
+}
+.workspace-nav a > svg,
+.btn > svg,
+.theme-toggle svg {
+  transition: transform 150ms ease-out;
+}
+.workspace-nav a:hover > svg {
+  transform: translateY(-2px) rotate(-5deg);
+}
+.workspace-nav a[aria-current='page'] > svg {
+  animation: icon-settle 180ms ease-out;
+}
+.btn:hover > svg {
+  transform: translateY(-1px);
+}
+.btn:active > svg {
+  transform: scale(0.9);
+}
+.btn > svg.animate-spin {
+  animation: icon-spin 1s linear infinite;
+}
+.theme-toggle {
+  margin-left: auto;
+  border-radius: 50%;
+  min-height: 32px;
+}
+.theme-toggle + .badge {
+  margin-left: 0;
+}
+.react-animation-controls button:focus-visible {
+  outline-offset: 3px;
+}
+@keyframes select-enter {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes icon-settle {
+  from {
+    transform: translateY(3px) scale(0.9);
+  }
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.repo-table {
+  table-layout: fixed;
+}
+.repo-table td:nth-child(2),
+.repo-table th:nth-child(2) {
+  overflow-wrap: anywhere;
+}
+.repo-table th:first-child {
+  width: 65px;
+}
+.repo-table .optional {
+  width: 90px;
+}
+.account-card .btn {
+  white-space: normal;
+}
+.account-card > .grow {
+  min-width: 0;
+}
+.workspace-breadcrumb {
+  flex-wrap: wrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-select-content,
+  .workspace-nav a[aria-current='page'] > svg {
+    animation: none !important;
+  }
+  .workspace-nav a:hover > svg,
+  .btn:hover > svg {
+    transform: none;
+  }
+}

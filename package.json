@@ -1,0 +1,27 @@
+{
+  "name": "standup-auto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "React + Vite frontend and Express API for source-linked daily standups.",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "dev": "node --watch-path=backend/src --env-file-if-exists=.env backend/src/server.ts",
+    "build": "npm run build --workspace frontend && npm run build --workspace backend",
+    "typecheck": "npm run typecheck --workspaces",
+    "start": "node --env-file-if-exists=.env backend/dist/server.js",
+    "test": "node --test tests/*.test.js",
+    "sync:due": "node --env-file-if-exists=.env backend/src/jobs/worker.ts",
+    "format": "prettier --write frontend/src backend/src api docs README.md",
+    "format:check": "prettier --check frontend/src backend/src api"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.8"
+  }
+}
