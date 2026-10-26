@@ -1,6 +1,6 @@
 import { useTheme } from '@/theme/ThemeProvider';
 import { Sun, Moon } from 'lucide-react';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Menu, LogOut } from 'lucide-react';
@@ -35,6 +35,7 @@ export function WorkspaceLayout() {
     },
   });
   const title = navigation.find((n) => n.path === location.pathname)?.name || 'Today';
+  useEffect(() => { document.title = `${title} — Standup Auto`; }, [title]);
   if (query.isPending) return <Loader />;
   if (query.isError)
     return (
