@@ -1,9 +1,18 @@
 {
-  "$schema":"https://openapi.vercel.sh/vercel.json",
-  "framework":"vite",
-  "installCommand":"npm ci",
-  "buildCommand":"npm run build",
-  "outputDirectory":"frontend/dist",
-  "functions":{"api/[...path].ts":{"maxDuration":300}},
-  "rewrites":[{"source":"/((?!api/|assets/).*)","destination":"/index.html"}]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci --include=dev",
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "functions": {
+    "api/[...path].ts": {
+      "maxDuration": 300
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/((?!api/|assets/).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
