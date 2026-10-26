@@ -1,10 +1,11 @@
-import { createBrowserRouter, Navigate, RouterProvider, useLocation } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider, useLocation, useRouteError } from 'react-router-dom';
 import { HomeScreen } from '@/features/dashboard/screens/HomeScreen';
 import { LoginScreen } from '@/features/auth/screens/LoginScreen';
 import { DemoScreen } from '@/features/auth/screens/DemoScreen';
 import { WorkspaceLayout } from '@/features/dashboard/components/WorkspaceLayout';
 import { lazy, Suspense } from 'react';
 import { Loader } from '@/components/Loader/Loader';
+import { Button } from '@/components/ui/button';
 const TodayScreen = lazy(() =>
   import('@/features/standup/screens/TodayScreen').then((module) => ({
     default: module.TodayScreen,
@@ -49,6 +50,18 @@ function LegacyRoute() {
     />
   );
 }
+function RouteRecovery() {
+  const error = useRouteError();
+  const updated = error instanceof Error && /dynamically imported|Loading chunk|module script/i.test(error.message);
+  return (
+    <main className="loading-screen" id="main">
+      <h1>{updated ? 'A new version is ready.' : 'We couldn’t open this page.'}</h1>
+      <p role="alert">{updated ? 'This tab is using an earlier version of Standup Auto. Reload to continue with the latest update.' : 'Something interrupted this page. Reload and try again.'}</p>
+      <p className="tiny muted">Unsaved changes on this page may be lost when reloading.</p>
+      <Button variant="default" className="mt-6" onClick={() => window.location.reload()}>Reload page</Button>
+    </main>
+  );
+}
 const router = createBrowserRouter([
   { path: '/', element: <HomeScreen /> },
   { path: '/login', element: <LoginScreen /> },
@@ -56,6 +69,7 @@ const router = createBrowserRouter([
   { path: '/app', element: <LegacyRoute /> },
   {
     element: <ProtectedRoute />,
+    errorElement: <RouteRecovery />,
     children: [
       {
         element: <WorkspaceLayout />,
