@@ -2,7 +2,8 @@ import { randomUUID } from 'node:crypto';
 import { GitHub, accessToken, collectRepository } from './github.service.ts';
 import { localDate, shiftDate, workDate } from '../../../utils/dates.ts';
 import { ensureStandup } from '../../standup/services/standup.service.ts';
-import { AppError } from '../../../utils/errors.ts';
+import { forEachConcurrent } from '../../../utils/concurrency.ts';
+import { requireValue, AppError } from '../../../utils/errors.ts';
 
 const running = new Map();
 export async function syncUser(db, user, config, request = fetch) {
@@ -43,14 +44,14 @@ async function performSync(db, user, config, request) {
       : new GitHub(await accessToken(db, user.id, config, request), request);
   for (const repo of repos) {
     try {
-      const items = client
+      const items: any[] = client
         ? await collectRepository(client, repo, user, start, end)
         : demoActivity(repo, day);
       // Disconnect or delete during a slow upstream request must prevent late writes.
       const stillConnected = await db.get('integration', user.id, user.id);
       if (!stillConnected?.payload.connected)
         throw new AppError(409, 'Account disconnected during sync.');
-      for (const item of items) await db.put('activity', `${user.id}/${item.id}`, user.id, item);
+      await forEachConcurrent(items, (item) => db.put('activity', `${user.id}/${item.id}`, user.id, item));
       status.repositories.push({
         id: repo.id,
         name: repo.fullName,
@@ -129,21 +130,29 @@ export function demoActivity(repo, day) {
 export async function refreshRepositories(db, user, config, request = fetch) {
   const client = new GitHub(await accessToken(db, user.id, config, request), request);
   const available = await client.repositories();
-  const old = await db.list('repository', user.id),
+  const old: any[] = await db.list('repository', user.id),
     oldById = new Map<string, any>(old.map((r) => [r.payload.id, r]));
-  const ids = new Set();
-  for (const repo of available) {
-    const id = String(repo.id);
-    ids.add(id);
-    await db.put('repository', `${user.id}/${id}`, user.id, {
-      id,
-      fullName: repo.full_name,
-      description: repo.description || '',
-      private: repo.private,
-      defaultBranch: repo.default_branch,
-      selected: oldById.get(id)?.payload.selected || false,
-    });
-  }
-  for (const row of old)
-    if (!ids.has(row.payload.id)) await db.remove('repository', row.id, user.id);
+  const ids = new Set(available.map((repo) => String(repo.id)));
+  await forEachConcurrent(available, async (repo) => {
+    const id = String(repo.id), previous = oldById.get(id);
+    const payload = {
+      id, fullName: repo.full_name, description: repo.description || '',
+      private: repo.private, defaultBranch: repo.default_branch,
+      selected: previous?.payload.selected || false,
+    };
+    if (previous && Object.entries(payload).every(([key, value]) => previous.payload[key] === value)) return;
+    await db.put('repository', `${user.id}/${id}`, user.id, payload, previous?.version || 0);
+  });
+  await forEachConcurrent(old.filter((row) => !ids.has(row.payload.id)),
+    (row) => db.remove('repository', row.id, user.id));
+}
+
+export async function selectRepositories(db, user, selectedIds: string[]) {
+  const selected = new Set(selectedIds);
+  const rows: any[] = await db.list('repository', user.id);
+  requireValue([...selected].every((id) => rows.some((row) => row.payload.id === id)),
+    'One or more repositories are not available to this account.');
+  await forEachConcurrent(rows.filter((row) => row.payload.selected !== selected.has(row.payload.id)),
+    (row) => db.put('repository', row.id, user.id,
+      { ...row.payload, selected: selected.has(row.payload.id) }, row.version));
 }

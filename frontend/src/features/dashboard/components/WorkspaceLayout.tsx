@@ -1,6 +1,6 @@
 import { useTheme } from '@/theme/ThemeProvider';
 import { Sun, Moon } from 'lucide-react';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Outlet, useLocation, useOutletContext } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Menu, LogOut } from 'lucide-react';
@@ -56,7 +56,7 @@ export function WorkspaceLayout() {
             @{workspace.user.login} ·{' '}
             {workspace.user.mode === 'demo' ? 'Sample account' : 'GitHub connected account'}
           </p>
-          <Button disabled={signOut.isPending} onClick={() => signOut.mutate()}>
+          <Button loading={signOut.isPending} loadingText="Signing out…" onClick={() => signOut.mutate()}>
             <LogOut size={16} />
             Sign out
           </Button>
@@ -102,7 +102,7 @@ export function WorkspaceLayout() {
               Some repositories failed. Check sync status and retry.
             </div>
           )}
-          <Outlet context={{ workspace, setDate, sync } satisfies WorkspaceContext} />
+          <Suspense fallback={<Loader label="Opening this page" />}><Outlet context={{ workspace, setDate, sync } satisfies WorkspaceContext} /></Suspense>
         </main>
       </div>
       <Modal open={menu} onOpenChange={setMenu} title="Navigation">

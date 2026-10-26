@@ -1,6 +1,6 @@
 import { Select } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { useState, useMemo, useDeferredValue } from 'react';
 import { Info, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { PageHeading } from '@/components/Header/PageHeading';
@@ -12,20 +12,22 @@ export function ActivityScreen() {
   const { workspace, sync } = useWorkspaceContext(),
     [search, setSearch] = useState(''),
     [type, setType] = useState('all'),
-    [repository, setRepository] = useState('all');
-  const events = workspace.activity.filter(
+    [repository, setRepository] = useState('all'),
+    [visible, setVisible] = useState(30);
+  const query = useDeferredValue(search.toLowerCase());
+  const events = useMemo(() => workspace.activity.filter(
     (event) =>
-      (event.title + ' ' + event.repository).toLowerCase().includes(search.toLowerCase()) &&
+      (event.title + ' ' + event.repository).toLowerCase().includes(query) &&
       (type === 'all' || event.type === type) &&
       (repository === 'all' || event.repositoryId === repository),
-  );
+  ), [workspace.activity, query, type, repository]);
   return (
     <>
       <PageHeading
         title="Your work, with the evidence."
         subtitle="Inspect collected commits, pull requests, and reviews."
         actions={
-          <Button disabled={sync.pending} onClick={sync.start}>
+          <Button loading={sync.pending} loadingText="Syncing activity…" onClick={sync.start}>
             <RefreshCw size={16} />
             Sync activity
           </Button>
@@ -40,7 +42,7 @@ export function ActivityScreen() {
           type="search"
           placeholder="Search activity…"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setVisible(30); }}
         />
         <label className="sr-only" htmlFor="activity-type">
           Activity type
@@ -49,7 +51,7 @@ export function ActivityScreen() {
           id="activity-type"
           label="Activity type"
           value={type}
-          onValueChange={setType}
+          onValueChange={(value) => { setType(value); setVisible(30); }}
           options={[
             { value: 'all', label: 'All activity' },
             { value: 'commit', label: 'Commits' },
@@ -64,15 +66,22 @@ export function ActivityScreen() {
           id="activity-repo"
           label="Repository"
           value={repository}
-          onValueChange={setRepository}
+          onValueChange={(value) => { setRepository(value); setVisible(30); }}
           options={[
             { value: 'all', label: 'All repositories' },
             ...workspace.repositories.map((repo) => ({ value: repo.id, label: repo.fullName })),
           ]}
         />
       </div>
+      <div className="activity-overview" aria-label="Collected activity summary">
+        <div><strong>{workspace.activity.filter(event => event.type === 'commit').length}</strong><span>Commits</span></div>
+        <div><strong>{workspace.activity.filter(event => event.type === 'pull_request').length}</strong><span>Pull requests</span></div>
+        <div><strong>{workspace.activity.filter(event => event.type === 'review').length}</strong><span>Reviews</span></div>
+        <div><strong>{workspace.repositories.filter(repo => repo.selected).length}</strong><span>Selected repositories</span></div>
+      </div>
+      <p className="activity-result-count" role="status">{events.length} matching events · Select a change to inspect its source</p>
       <Card>
-        {events.map((event) => (
+        {events.slice(0, visible).map((event) => (
           <ActivityEvent key={event.id} event={event} />
         ))}
         {!events.length && (
@@ -85,6 +94,7 @@ export function ActivityScreen() {
           </div>
         )}
       </Card>
+      {visible < events.length && <Button className="mt-5" onClick={() => setVisible(count => count + 30)}>Show more activity ({events.length - visible} remaining)</Button>}
       <div className="info-banner">
         <Info size={17} />
         Collection covers commits on default branches, authored pull requests, and submitted

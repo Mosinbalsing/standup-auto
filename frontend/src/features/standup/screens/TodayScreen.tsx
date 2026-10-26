@@ -51,7 +51,8 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
     ),
     [dirty, setDirty] = useState(false),
     [format, setFormat] = useState(() => localStorage.getItem('sa-copy-format') || 'plain'),
-    [clipboard, setClipboard] = useState<string | null>(null);
+    [clipboard, setClipboard] = useState<string | null>(null),
+    [copying, setCopying] = useState(false);
   const toast = useToast(),
     save = useSaveStandup(),
     client = useQueryClient(),
@@ -87,6 +88,7 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
       toast('Save your draft before copying.');
       return;
     }
+    setCopying(true);
     try {
       const { text } = await exportStandup(workspace.date, format);
       try {
@@ -97,7 +99,7 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
       }
     } catch (error) {
       toast((error as Error).message);
-    }
+    } finally { setCopying(false); }
   }
   async function saveDraft() {
     try {
@@ -130,11 +132,11 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
         subtitle={`${shortDate(workspace.date)} · ${workspace.user.timezone}`}
         actions={
           <>
-            <Button disabled={sync.pending || dirty} onClick={sync.start}>
+            <Button loading={sync.pending} loadingText="Syncing activity…" disabled={dirty} onClick={sync.start}>
               <RefreshCw size={16} className={sync.pending ? 'animate-spin' : ''} />
               {sync.pending ? 'Syncing…' : 'Sync activity'}
             </Button>
-            <Button variant="default" disabled={dirty || save.isPending} onClick={copy}>
+            <Button variant="default" loading={copying} loadingText="Preparing copy…" disabled={dirty || save.isPending} onClick={copy}>
               <Copy size={16} />
               Copy saved standup
             </Button>
@@ -280,7 +282,7 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
                 />
                 Reviewed and ready for weekly recap
               </label>
-              <Button variant="default" disabled={save.isPending} onClick={saveDraft}>
+              <Button variant="default" loading={save.isPending} loadingText="Saving standup…" onClick={saveDraft}>
                 <Check size={16} />
                 {save.isPending ? 'Saving…' : 'Save standup'}
               </Button>
@@ -339,7 +341,7 @@ function StandupEditor({ workspace, setDate, sync }: ReturnType<typeof useWorksp
                 <Button onClick={() => add('blockers', 'Need help with: ' + candidate.title)}>
                   Add blocker
                 </Button>
-                <Button disabled={dismiss.isPending} onClick={() => dismiss.mutate(candidate.id)}>
+                <Button loading={dismiss.isPending} loadingText="Dismissing…" onClick={() => dismiss.mutate(candidate.id)}>
                   Dismiss
                 </Button>
               </div>

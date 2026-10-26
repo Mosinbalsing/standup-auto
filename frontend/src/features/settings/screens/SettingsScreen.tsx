@@ -30,7 +30,7 @@ function SettingsForm({
   const [user, setUser] = useState<Preferences>(workspace.user),
     [confirm, setConfirm] = useState<'disconnect' | 'delete' | null>(null),
     [confirmation, setConfirmation] = useState(''),
-    { theme, setTheme, reduced, setReduced } = useTheme(),
+    { appearance, setTheme, reduced, setReduced } = useTheme(),
     toast = useToast(),
     client = useQueryClient();
   const save = useMutation({
@@ -152,7 +152,7 @@ function SettingsForm({
                 {save.error.message}
               </p>
             )}
-            <Button variant="default" type="submit" disabled={save.isPending}>
+            <Button variant="default" type="submit" loading={save.isPending} loadingText="Saving preferences…">
               {save.isPending ? 'Saving…' : 'Save preferences'}
             </Button>
           </form>
@@ -162,13 +162,13 @@ function SettingsForm({
             <CardContent>
               <h2>Appearance</h2>
               <div className="segmented mt-5" role="group" aria-label="Color theme">
-                {(['light', 'dark'] as const).map((value) => (
+                {(['system', 'light', 'dark'] as const).map((value) => (
                   <button
                     key={value}
-                    aria-pressed={theme === value}
+                    aria-pressed={appearance === value}
                     onClick={() => setTheme(value)}
                   >
-                    {value === 'light' ? 'Light' : 'Dark'}
+                    {value === 'system' ? 'System' : value === 'light' ? 'Light' : 'Dark'}
                   </button>
                 ))}
               </div>
@@ -197,7 +197,7 @@ function SettingsForm({
                 </Button>
               ) : workspace.user.mode === 'demo' ? (
                 <Button
-                  disabled={connection.isPending}
+                  loading={connection.isPending} loadingText="Reconnecting…"
                   onClick={() => connection.mutate('reconnect')}
                 >
                   Reconnect sample account

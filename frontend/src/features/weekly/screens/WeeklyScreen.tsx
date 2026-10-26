@@ -154,7 +154,7 @@ export function WeeklyScreen() {
         actions={
           <Button
             variant="default"
-            disabled={save.isPending}
+            loading={save.isPending} loadingText="Saving recap…"
             onClick={async () => {
               try {
                 await save.mutateAsync({ start, version: recap.version, text });

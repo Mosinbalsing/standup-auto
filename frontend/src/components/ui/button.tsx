@@ -1,3 +1,4 @@
+import { LoaderCircle } from 'lucide-react';
 import type { ButtonHTMLAttributes } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils/cn';
@@ -22,9 +23,17 @@ export function Button({
   variant,
   size,
   type = 'button',
+  loading = false,
+  loadingText,
+  disabled,
+  children,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants>) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof buttonVariants> & { loading?: boolean; loadingText?: string }) {
   return (
-    <button type={type} className={cn(buttonVariants({ variant, size }), className)} {...props} />
+    <button type={type} className={cn(buttonVariants({ variant, size }), className)}
+      {...props} disabled={disabled || loading} aria-busy={loading || undefined}>
+      {loading && <LoaderCircle size={16} className="button-spinner" aria-hidden="true" />}
+      {loading && loadingText ? loadingText : children}
+    </button>
   );
 }

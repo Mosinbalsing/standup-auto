@@ -1,7 +1,7 @@
 import type { Context, Controller } from '../../../types/context.ts';
 import { account } from '../../../types/context.ts';
-import { requireValue, AppError } from '../../../utils/errors.ts';
-import { refreshRepositories } from '../services/sync.service.ts';
+import { AppError } from '../../../utils/errors.ts';
+import { refreshRepositories, selectRepositories } from '../services/sync.service.ts';
 import { startSyncJob, waitForJobs } from '../../../jobs/dailyStandup.job.ts';
 import { repositorySelectionSchema } from '../schemas/github.schema.ts';
 export function githubController({
@@ -19,22 +19,9 @@ export function githubController({
       res.json({ ok: true });
     },
     select: async (req, res) => {
-      const { user } = account(res),
-        data = repositorySelectionSchema.parse(req.body),
-        selected = new Set(data.selected),
-        list = await db.list('repository', user.id);
-      requireValue(
-        [...selected].every((id) => list.some((row) => row.payload.id === id)),
-        'One or more repositories are not available to this account.',
-      );
-      for (const row of list)
-        await db.put(
-          'repository',
-          row.id,
-          user.id,
-          { ...row.payload, selected: selected.has(row.payload.id) },
-          row.version,
-        );
+      const { user } = account(res);
+      const data = repositorySelectionSchema.parse(req.body);
+      await selectRepositories(db, user, data.selected);
       res.json({ ok: true });
     },
     sync: async (_req, res) => {

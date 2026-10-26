@@ -1,4 +1,5 @@
 import * as Alert from '@radix-ui/react-alert-dialog';
+import { Button } from './button';
 import type { ReactNode } from 'react';
 export function ConfirmDialog({
   open,
@@ -33,9 +34,9 @@ export function ConfirmDialog({
             <Alert.Cancel className="btn" disabled={pending}>
               Cancel
             </Alert.Cancel>
-            <button className="btn danger" disabled={pending} onClick={onConfirm}>
-              {pending ? 'Working…' : confirmLabel}
-            </button>
+            <Button variant="destructive" loading={pending} loadingText="Working…" onClick={onConfirm}>
+              {confirmLabel}
+            </Button>
           </div>
         </Alert.Content>
       </Alert.Portal>

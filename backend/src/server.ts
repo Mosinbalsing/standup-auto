@@ -1,12 +1,14 @@
 import express from 'express';
 import { createServer } from 'node:http';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { configuration } from './config/env.ts';
 import { openStore } from './config/database.ts';
-import { createExpressApp, frontendRoot } from './app.ts';
+import { createExpressApp } from './app.ts';
 import { waitForJobs } from './jobs/dailyStandup.job.ts';
 import { errorMiddleware } from './middleware/error.middleware.ts';
 
+const frontendRoot = fileURLToPath(new URL('../../frontend', import.meta.url));
 const config = configuration(),
   db = openStore(config),
   app = createExpressApp({ config, db }),

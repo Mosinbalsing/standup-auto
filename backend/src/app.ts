@@ -1,6 +1,5 @@
 import express from 'express';
 import { createServer } from 'node:http';
-import { fileURLToPath } from 'node:url';
 import type { Dependencies, Context } from './types/context.ts';
 import { apiRoutes } from './routes/index.ts';
 import { errorMiddleware } from './middleware/error.middleware.ts';
@@ -44,4 +43,3 @@ export function createExpressApp(dependencies: Dependencies) {
 export function createApp(dependencies: Dependencies) {
   return createServer(createExpressApp(dependencies));
 }
-export const frontendRoot = fileURLToPath(new URL('../../frontend', import.meta.url));
